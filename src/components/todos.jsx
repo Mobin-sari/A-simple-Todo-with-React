@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { storedValueFun } from "../helper/helper";
+import Todo from "./Todo";
 
 export default function Todos() {
   const [todos, setTodos] = useState([]);
+
   const [todo, setTodo] = useState({
     nameTodo: "",
     date: "",
     check: false,
   });
 
-  const todoNameHandler = (e) => {
+  const todoHandler = (e) => {
     const { name, value } = e.target;
     setTodo((prevTodo) => ({
       ...prevTodo,
@@ -17,7 +20,9 @@ export default function Todos() {
   };
 
   const addTodos = () => {
-    setTodos((prevTodos) => [...prevTodos, todo]);
+    if (todo.nameTodo.length == 0 || todo.date.length == 0) return;
+    const storedData = storedValueFun(todo);
+    setTodos((prevTodos) => [...prevTodos, storedData]);
   };
   console.log(todos);
   return (
@@ -27,24 +32,21 @@ export default function Todos() {
           type="text"
           name="nameTodo"
           value={todo.nameTodo}
-          onChange={todoNameHandler}
+          onChange={todoHandler}
         />
         <input
           type="date"
           name="date"
           value={todo.date}
-          onChange={todoNameHandler}
+          onChange={todoHandler}
         />
       </div>
       <div>
         {todos?.map((t, index) => (
-          <div key={index}>
-            <p>{t.nameTodo}</p>
-            <p>{t.date}</p>
-          </div>
+          <Todo todo={t} index={index + 1} />
         ))}
       </div>
-      <button onClick={addTodos}>add</button>
+      <button onClick={addTodos}>Add</button>
     </div>
   );
 }
